@@ -31,6 +31,7 @@ export class WelcomePage implements OnInit {
       localStorage.setItem('hi', paramMap.get('hi'));
       this.orderItemService.hotelId = hotelId;
       console.log(hotelId, this.orderItemService.hotelId);
+
       // 'dXEwMm5qSVVGaWFkNzhCRHlQN2g5RjhvMWIvNnlDWHEvbFR1S29VRjJYaz0'
       this.api.getHotelType(hotelId).subscribe(
         (resp) => {

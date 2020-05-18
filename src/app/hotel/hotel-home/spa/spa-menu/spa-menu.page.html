@@ -2,16 +2,16 @@
   <ion-title>
     <img src="../../../../../assets/Logo_Grey.png" alt="">
   </ion-title>
-  <ion-buttons slot="end">
+  <!-- <ion-buttons slot="end">
     <ion-button>
       <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
     </ion-button>
-  </ion-buttons>
+  </ion-buttons> -->
 </ion-toolbar>
 
 <ion-content>
   <ion-buttons>
-    <ion-back-button defaultHref="/hotel/tabs/hotel-home/spa"></ion-back-button>
+    <ion-back-button defaultHref="/hotel/tabs/hotel-home"></ion-back-button>
   </ion-buttons>
 
   <div class="spa-section ion-padding-horizontal" *ngFor="let spa of spaMenu">
@@ -22,7 +22,8 @@
       <div class="spa-item-details">
         <span style="font-weight: 500; color: #636362; font-size: 15px;">{{item.name}}</span> <br>
         <span style="font-weight: 500; color: #636362; font-size: 14px;">{{item.time}}</span> <br>
-        <span style="font-weight: 600; font-size: 14px;">&#x20B9;{{item.price}}.00</span>
+        <span style="font-weight: 600; font-size: 14px;">&#x20B9;{{item.price}}.00</span> <br>
+        <span style="font-size: 13px; color: #636362;">{{item.details}}</span>
       </div>
       <ion-button style="margin-top: 10px;" fill="outline" color="primary" (click)="bookSpa(item)" size="small">BOOK</ion-button>
     </div>

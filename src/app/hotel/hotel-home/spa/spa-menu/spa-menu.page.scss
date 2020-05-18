@@ -8,6 +8,10 @@
   margin-bottom: 50px;
 }
 
+ion-button {
+  --border-width: 0.5px;
+}
+
 .spa-items {
   display: flex;
   flex-direction: row;

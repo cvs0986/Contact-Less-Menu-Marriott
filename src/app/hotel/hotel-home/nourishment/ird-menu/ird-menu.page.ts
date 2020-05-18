@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular';
 import { CartComponent } from 'src/app/hotel/cart/cart.component';
+import { HotelApiService } from 'src/app/hotel/hotel-api.service';
 
 @Component({
   selector: 'app-ird-menu',
@@ -10,6 +11,7 @@ import { CartComponent } from 'src/app/hotel/cart/cart.component';
 export class IrdMenuPage implements OnInit {
   itemQty = 0;
   isIos: boolean;
+  menuItemsApi: any = [];
 
   menuItems: any[] = [
     {
@@ -205,49 +207,67 @@ export class IrdMenuPage implements OnInit {
     },
   ];
 
-  constructor(private modalCtrl: ModalController, private platform: Platform) {}
+  constructor(
+    private modalCtrl: ModalController,
+    private platform: Platform,
+    private hotelApi: HotelApiService
+  ) {}
 
   ngOnInit() {
     this.isIos = this.platform.is('ios');
     console.log(this.isIos);
+    this.hotelApi.getMenus('NnhkTElyTEc1c1d1ZUtpZmJPQ1JJVklzMW8xTTU3bzdJUFJ4NzBUdVdqVT0=').subscribe(
+      (resp) => {
+        this.menuItemsApi = resp.body.data;
+        console.log(this.menuItemsApi);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   addItemInitial(menuItem) {
-    menuItem.qty += 1;
+    menuItem.count += 1;
     this.itemQty += 1;
-    console.log(menuItem.qty + 1, menuItem, this.itemQty);
+    console.log(menuItem.count + 1, menuItem, this.itemQty);
   }
 
   incrementQty(item) {
-    item.qty += 1;
+    item.count += 1;
     this.itemQty += 1;
-    console.log(item.qty + 1, item, this.itemQty);
+    console.log(item.count + 1, item, this.itemQty);
   }
 
   // decrements item
 
   decrementQty(item) {
-    if (item.qty - 1 < 1) {
-      item.qty = 0;
+    if (item.count - 1 < 1) {
+      item.count = 0;
       this.itemQty -= 1;
-      console.log(item.qty, item, this.itemQty);
+      console.log(item.count, item, this.itemQty);
     } else {
-      item.qty -= 1;
+      item.count -= 1;
       this.itemQty -= 1;
-      console.log(item.qty, item, this.itemQty);
+      console.log(item.count, item, this.itemQty);
     }
   }
 
   reviewOrder() {
     localStorage.removeItem('cart-items');
     const cartItems = [];
-    this.menuItems.filter((item) => {
-      item.headEl.filter(menu => {
-        menu.items.filter(menuItem => {
-          if (menuItem.qty !== 0) {
-            cartItems.push(menuItem);
+    this.menuItemsApi.categories.filter(item => {
+      item.sub_categories.filter(item => {
+        item.items.filter(item => {
+          if (item.count !== 0) {
+            cartItems.push(item);
           }
         });
+      });
+      item.without_sub_category_items.filter(item => {
+        if (item.count !== 0) {
+          cartItems.push(item);
+        }
       });
     });
     console.log(cartItems);

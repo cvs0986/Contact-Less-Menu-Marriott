@@ -3,15 +3,133 @@
     <img src="../../../assets/Logo_Grey.png" alt="">
   </ion-title>
 
-  <ion-buttons slot="end">
+  <!-- <ion-buttons slot="end">
     <ion-button>
       <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
     </ion-button>
-  </ion-buttons>
+  </ion-buttons> -->
 </ion-toolbar>
 
 <ion-content>
-  <div class="content-padding">
+  <div class="card-design-wrap ion-padding-horizontal">
+    <ion-row>
+      <ion-col size="12">
+        <div class="service-hr" [routerLink]="['/hotel/tabs/hotel-home/journey']">
+          <ion-thumbnail>
+            <img src="../../../assets/journey.png" alt="">
+          </ion-thumbnail>
+          <!-- <div class="service-bg" style="background-color: #66615D;"></div> -->
+          <div class="service-text-wrap" style="background-color: #66615D;">
+            <h6>WELCOME</h6>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12">
+        <div class="service-hr" [routerLink]="['/hotel/tabs/hotel-home/nourishment/ird-menu']">
+          <ion-thumbnail>
+            <img src="../../../assets/nourishment-banner-new.jpg" alt="">
+          </ion-thumbnail>
+          <div class="service-text-wrap" style="background-color: #66615D;">
+            <h6>ORDER IN-ROOM DINING</h6>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row>
+      <ion-col size="6">
+        <div class="square-wrap" [routerLink]="['/hotel/tabs/hotel-home/spa/spa-menu']" style="position: relative; height: 144px; border-radius: 8px; background-image: url('../../../assets/spa.png'); background-size: cover; background-repeat: no-repeat; background-position: top center;">
+
+          <div class="card-text" style="position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        padding: 0px 15px;
+                        background: #736353;
+                        opacity: 0.88;
+                        color: #fff; border-radius: 8px;">
+            <h6>SPA MENU</h6>
+          </div>
+        </div>
+      </ion-col>
+
+      <ion-col size="6">
+        <div class="square-wrap" [routerLink]="['/hotel/tabs/hotel-home/laundry']"
+          style="position: relative; height: 144px; border-radius: 8px; background-image: url('../../../assets/laundry.jpg'); background-size: cover; background-repeat: no-repeat; background-position: top center;">
+      
+          <div class="card-text" style="position: absolute;
+                              bottom: 0;
+                              left: 0;
+                              right: 0;
+                              padding: 0px 15px;
+                              background: #736353;
+                              opacity: 0.88;
+                              color: #fff; border-radius: 8px;">
+            <h6>LAUNDRY</h6>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6">
+        <div class="square-wrap" [routerLink]="['/hotel/tabs/hotel-home/tv-guide']"
+          style="position: relative; height: 144px; border-radius: 8px; background-image: url('../../../assets/tv.png'); background-size: cover; background-repeat: no-repeat; background-position: top center;">
+    
+          <div class="card-text" style="position: absolute;
+                            bottom: 0;
+                            left: 0;
+                            right: 0;
+                            padding: 0px 15px;
+                            background: #736353;
+                            opacity: 0.88;
+                            color: #fff; border-radius: 8px;">
+            <h6>TV CHANNEL</h6>
+          </div>
+        </div>
+      </ion-col>
+    
+      <ion-col size="6">
+        <div class="square-wrap" [routerLink]="['/hotel/tabs/hotel-home/connect']"
+          style="position: relative; height: 144px; border-radius: 8px; background-image: url('../../../assets/Connect.png'); background-size: cover; background-repeat: no-repeat; background-position: top center;">
+    
+          <div class="card-text" style="position: absolute;
+                                  bottom: 0;
+                                  left: 0;
+                                  right: 0;
+                                  padding: 0px 15px;
+                                  background: #736353;
+                                  opacity: 0.88;
+                                  color: #fff; border-radius: 8px;">
+            <h6>CONNECT</h6>
+          </div>
+        </div>
+      </ion-col>
+
+      <ion-col size="6">
+        <div class="square-wrap" [routerLink]="['/hotel/tabs/hotel-home/conserve']"
+          style="position: relative; height: 144px; border-radius: 8px; background-image: url('../../../assets/conserve.png'); background-size: cover; background-repeat: no-repeat; background-position: top center;">
+      
+          <div class="card-text" style="position: absolute;
+                                        bottom: 0;
+                                        left: 0;
+                                        right: 0;
+                                        padding: 0px 15px;
+                                        background: #736353;
+                                        opacity: 0.88;
+                                        color: #fff; border-radius: 8px;">
+            <h6>CONSERVE & REUSE</h6>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <!-- <div class="content-padding">
     <ion-row>
       <ion-col size="12">
         <div class="service-hr" (click)="navigateToService('journey')">
@@ -120,7 +238,7 @@
         </div>
       </ion-col>
     </ion-row>
-  </div>
+  </div> -->
 
   <!-- <ion-row>
     <ion-col>

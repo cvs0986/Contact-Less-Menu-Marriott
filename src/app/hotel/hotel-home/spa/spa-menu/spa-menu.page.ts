@@ -16,26 +16,31 @@ export class SpaMenuPage implements OnInit {
           name: 'Ultimate Aromatherapy Experience Message',
           time: '60 Minutes',
           price: '5600',
+          details: 'This treatment releases tension held in every part of the body that makes you deeply relaxed and recharged. Car Willy applied pressure stimulates the nervous system by Swedish and neuromuscular techniques that relieve muscular tension. lymphatic drainage encourages healthy circulation and the stress and strain are dissolved.'
         },
         {
           name: 'Ultimate Aromatherapy Experience Facial',
           time: '60 Minutes',
           price: '7000',
+          details: ''
         },
         {
           name: 'Intensive Deep Tissue ',
           time: '90 Minutes',
           price: '7200',
+          details: 'An intensive massage that works deep into stiff tight and aching muscles to instantly release pain and tension.'
         },
         {
           name: 'Traditional Thai Massage ',
           time: '90 Minutes',
           price: '7000',
+          details: ''
         },
         {
           name: 'Abhyanga Spice Bundle ',
           time: '90 Minutes',
           price: '8300',
+          details: 'A special type ofAyurvedic Marma massage using relaxing herbal oils which help to stimulate the Marma points of the body with Spice Bundle treatment for the stress points of the body to relieve stiffness and pain. The treatment is very effective in combating stress and relaxing the body followed by a steam bath.'
         },
         {
           name: 'Back, Neck & Shoulder',
