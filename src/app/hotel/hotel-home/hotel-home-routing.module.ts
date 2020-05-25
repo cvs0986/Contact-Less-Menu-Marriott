@@ -35,6 +35,10 @@ const routes: Routes = [
   {
     path: 'laundry-service',
     loadChildren: () => import('./laundry-service/laundry-service.module').then( m => m.LaundryServicePageModule)
+  },
+  {
+    path: 'place-your-service',
+    loadChildren: () => import('./place-your-service/place-your-service.module').then( m => m.PlaceYourServicePageModule)
   }
 ];
 

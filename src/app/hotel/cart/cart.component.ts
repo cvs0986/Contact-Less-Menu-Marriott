@@ -12,6 +12,7 @@ import * as $ from 'jquery';
 })
 export class CartComponent implements OnInit {
   @Input() cartItems;
+  @Input() itemQty;
   progressLoading = false;
   guestQty = 0;
   totalAmount;
@@ -55,6 +56,7 @@ export class CartComponent implements OnInit {
 
   incrementQty(item) {
     item.count += 1;
+    this.itemQty += 1;
     console.log(item.count + 1, item);
     this.calculateTotalPrice();
   }
@@ -64,10 +66,12 @@ export class CartComponent implements OnInit {
   decrementQty(item) {
     if (item.count - 1 < 1) {
       item.count = 0;
+      this.itemQty = 0;
       console.log(item.count, item);
       this.calculateTotalPrice();
     } else {
       item.count -= 1;
+      this.itemQty -= 1;
       console.log(item.count, item);
       this.calculateTotalPrice();
     }
@@ -88,7 +92,10 @@ export class CartComponent implements OnInit {
   }
 
   dismissCart() {
-    this.modalCtrl.dismiss();
+    this.modalCtrl.dismiss({
+      dismissed: 'closed',
+      totalQty: this.itemQty
+    });
   }
 
   orderPlaced() {
@@ -148,10 +155,10 @@ export class CartComponent implements OnInit {
 
     const data = {
       enc_hotel_id: 'NnhkTElyTEc1c1d1ZUtpZmJPQ1JJVklzMW8xTTU3bzdJUFJ4NzBUdVdqVT0=',
-      primises_id: this.roomNo,
       no_of_guest: this.guestQty,
       description: this.cookingIns,
-      items: JSON.stringify(orderedItems)
+      items: JSON.stringify(orderedItems),
+      room_no: this.roomNo
     };
     console.log(data);
 
@@ -164,17 +171,30 @@ export class CartComponent implements OnInit {
       }
      })
     .fail((xhr, status, error) => {
-        // error handling
         console.log(xhr, status, error);
-        if (xhr.status !== 200) {
+        if (xhr.status !== 200 && xhr.responseJSON.message !== 'Room is not available') {
           this.dismissCart();
           this.toastCtrl
             .create({
-              message:
-                'Something went wrong! Please try after some time.',
+              message: 'Something went wrong! Please try after some time.',
               keyboardClose: true,
               duration: 3000,
               color: 'danger',
+              position: 'top',
+            })
+            .then((toastEl) => {
+              toastEl.present();
+            });
+          return false;
+        }
+
+        if (xhr.status !== 200 && xhr.responseJSON.message === 'Room is not available') {
+          this.toastCtrl
+            .create({
+              message: xhr.responseJSON.message + ' Please enter correct room number.',
+              keyboardClose: true,
+              duration: 3000,
+              color: 'warning',
               position: 'top',
             })
             .then((toastEl) => {

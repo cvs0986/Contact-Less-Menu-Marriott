@@ -1,0 +1,9 @@
+<div class="top-section">
+  <ion-list lines="none">
+    <div class="cate" *ngFor="let category of subCategories">
+      <ion-item style="font-size: 13px;" detail="false" *ngIf="category.enabled == 1"
+        (click)="dismissPopover(category.id)" button>{{category.name}}
+      </ion-item>
+    </div>
+  </ion-list>
+</div>

@@ -99,3 +99,35 @@ ion-button {
     --ion-font-family: 'Goatham' !important;
     font-family: 'Goatham' !important;
 }
+
+
+.my-custom-modal-css .modal-wrapper {
+   height: 80%;
+   top: 20%;
+   position: absolute; 
+   display: block;  
+}
+
+.add-btn {
+    font-weight: 600;
+    border: 1px solid #ccc;
+}
+
+.repeat-btn {
+    font-weight: 600;
+    border: 1px solid #eb445a;
+    color: #eb445a;
+}
+
+.buttonCss {
+    button.alert-button:nth-child(1){
+      font-weight: 400;
+      text-transform: none;
+    }
+
+    button.alert-button:nth-child(2){
+      color: #eb445a;
+      font-weight: 400;
+      text-transform: none;
+    }
+}

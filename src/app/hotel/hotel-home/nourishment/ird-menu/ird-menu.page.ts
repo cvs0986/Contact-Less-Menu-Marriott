@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ModalController, Platform, PopoverController, IonContent, AlertController } from '@ionic/angular';
 import { CartComponent } from 'src/app/hotel/cart/cart.component';
 import { HotelApiService } from 'src/app/hotel/hotel-api.service';
+import { IrdMenuFilterComponent } from './ird-menu-filter/ird-menu-filter.component';
+import { ItemAddOnComponent } from './item-add-on/item-add-on.component';
 
 @Component({
   selector: 'app-ird-menu',
@@ -9,9 +11,11 @@ import { HotelApiService } from 'src/app/hotel/hotel-api.service';
   styleUrls: ['./ird-menu.page.scss'],
 })
 export class IrdMenuPage implements OnInit {
+  @ViewChild(IonContent, {static: true}) content: IonContent;
   itemQty = 0;
   isIos: boolean;
   menuItemsApi: any = [];
+  selectedItems: any[] = [];
 
   menuItems: any[] = [
     {
@@ -210,7 +214,9 @@ export class IrdMenuPage implements OnInit {
   constructor(
     private modalCtrl: ModalController,
     private platform: Platform,
-    private hotelApi: HotelApiService
+    private hotelApi: HotelApiService,
+    private popOverCtrl: PopoverController,
+    private alertCtrl: AlertController
   ) {}
 
   ngOnInit() {
@@ -219,6 +225,26 @@ export class IrdMenuPage implements OnInit {
     this.hotelApi.getMenus('NnhkTElyTEc1c1d1ZUtpZmJPQ1JJVklzMW8xTTU3bzdJUFJ4NzBUdVdqVT0=').subscribe(
       (resp) => {
         this.menuItemsApi = resp.body.data;
+        this.menuItemsApi.categories.filter(category => {
+          category.sub_categories.filter(subCategory => {
+            let add_ons: any;
+            add_ons = subCategory.items.map((item) => {
+              let o = Object.assign({}, item);
+              o.addons = [];
+              return o;
+            });
+            subCategory.items = add_ons;
+          });
+          if (category.without_sub_category_items.length !== 0) {
+            let add_ons: any;
+            add_ons = category.without_sub_category_items.map(item => {
+              let o = Object.assign({}, item);
+              o.addons = [];
+              return o;
+            });
+            category.without_sub_category_items = add_ons;
+          }
+        });
         console.log(this.menuItemsApi);
       },
       (error) => {
@@ -227,16 +253,146 @@ export class IrdMenuPage implements OnInit {
     );
   }
 
-  addItemInitial(menuItem) {
-    menuItem.count += 1;
-    this.itemQty += 1;
-    console.log(menuItem.count + 1, menuItem, this.itemQty);
+  parsedJSON(item) {
+    return JSON.parse(item);
   }
 
-  incrementQty(item) {
-    item.count += 1;
+  showMenusCategory(ev) {
+    this.popOverCtrl
+      .create({
+        component: IrdMenuFilterComponent,
+        componentProps: {
+          menuCategories: this.menuItemsApi.categories,
+        },
+        event: ev,
+        translucent: true,
+        showBackdrop: true,
+        cssClass: 'ird-menu-filter',
+      })
+      .then((popoverEl) => {
+        popoverEl.present();
+        popoverEl.onDidDismiss().then((dismissEl) => {
+          const data = dismissEl.data;
+          console.log(data);
+          if (dismissEl.data.role === 'closed') {
+            const titleELe = document.getElementById(data.data);
+            this.content.scrollToPoint(0, titleELe.offsetTop, 1000);
+            console.log(data, titleELe);
+          }
+          console.log(dismissEl.data);
+        });
+      });
+  }
+
+  addItemInitial(menuItem) {
+    if (menuItem.sub_addons.length !== 0) {
+      menuItem.count += 1;
+      menuItem.sub_addons.filter(item => {
+        if (item.type === 'single_select') {
+          let add_ons: any;
+          add_ons = item.addons.map((el) => {
+            let o = Object.assign({}, el);
+            o.selected = null;
+            return o;
+          });
+          item.addons = add_ons;
+        } else if (item.type === 'multi_select') {
+          let add_ons: any;
+          add_ons = item.addons.map((el) => {
+            let o = Object.assign({}, el);
+            o.isSelected = false;
+            return o;
+          });
+          item.addons = add_ons;
+        }
+      });
+      this.modalCtrl.create({
+        component: ItemAddOnComponent,
+        componentProps: {
+          itemAddon: menuItem
+        },
+        backdropDismiss: false,
+        cssClass: 'my-custom-modal-css'
+      }).then(modalEl => {
+        modalEl.present();
+        modalEl.onDidDismiss().then(dismissEl => {
+          if (dismissEl.data === undefined) {
+            menuItem.count = 0;
+            return false;
+          }
+          if (dismissEl.data.dismissed === 'close-btn') {
+            this.itemQty += dismissEl.data.totalQty;
+            this.selectedItems.push(dismissEl.data.duplicateItem);
+          }
+          console.log(menuItem, this.selectedItems);
+        });
+      });
+      console.log(this.selectedItems);
+      return false;
+    }
+    menuItem.count += 1;
+    this.selectedItems.push(menuItem);
     this.itemQty += 1;
-    console.log(item.count + 1, item, this.itemQty);
+    console.log(menuItem.count + 1, menuItem, this.itemQty, this.selectedItems);
+  }
+
+  incrementQty(menuItem) {
+    if (menuItem.addons.length !== 0) {
+      menuItem.count += 1;
+      menuItem.addons = [];
+      menuItem.sub_addons.filter((item) => {
+              if (item.type === 'single_select') {
+                let add_ons: any;
+                add_ons = item.addons.map((el) => {
+                  let o = Object.assign({}, el);
+                  o.selected = null;
+                  return o;
+                });
+                item.addons = add_ons;
+              } else if (item.type === 'multi_select') {
+                let add_ons: any;
+                add_ons = item.addons.map((el) => {
+                  let o = Object.assign({}, el);
+                  o.isSelected = false;
+                  return o;
+                });
+                item.addons = add_ons;
+              }
+            });
+      this.modalCtrl
+              .create({
+                component: ItemAddOnComponent,
+                componentProps: {
+                  itemAddon: menuItem,
+                  isRepeat: true
+                },
+                backdropDismiss: false,
+                cssClass: 'my-custom-modal-css',
+              })
+              .then((modalEl) => {
+                modalEl.present();
+                modalEl.onDidDismiss().then((dismissEl) => {
+                  if (dismissEl.data === undefined) {
+                    menuItem.count -= 1;
+                    return false;
+                  }
+                  if (dismissEl.data.dismissed === 'close-btn') {
+                    this.itemQty += dismissEl.data.totalQty;
+                    dismissEl.data.duplicateItem.count = 1;
+                    this.selectedItems.push(dismissEl.data.duplicateItem);
+                    console.log(this.selectedItems);
+                  }
+                  console.log(menuItem);
+                });
+              });
+      return false;
+    }
+    const selectedIndex = this.selectedItems.indexOf(menuItem);
+    this.selectedItems[selectedIndex].count += 1;
+    this.selectedItems[selectedIndex].count -= 1;
+    menuItem.count += 1;
+    this.itemQty += 1;
+    console.log(menuItem.count + 1, menuItem, this.itemQty, this.selectedItems);
   }
 
   // decrements item
@@ -244,12 +400,17 @@ export class IrdMenuPage implements OnInit {
   decrementQty(item) {
     if (item.count - 1 < 1) {
       item.count = 0;
+      item.addons = [];
       this.itemQty -= 1;
-      console.log(item.count, item, this.itemQty);
+      if (this.itemQty < 1) {
+        this.selectedItems = [];
+      }
+      console.log(item.count, item, this.itemQty, this.selectedItems);
     } else {
       item.count -= 1;
       this.itemQty -= 1;
-      console.log(item.count, item, this.itemQty);
+      this.selectedItems.splice(this.selectedItems.indexOf(item), 1);
+      console.log(item.count, item, this.itemQty, this.selectedItems);
     }
   }
 
@@ -276,10 +437,16 @@ export class IrdMenuPage implements OnInit {
     this.modalCtrl.create({
       component: CartComponent,
       componentProps: {
-        cartItems: cartItems
+        cartItems: this.selectedItems,
+        itemQty: this.itemQty
       }
     }).then(modalEl => {
       modalEl.present();
+      modalEl.onDidDismiss().then(dismissEl => {
+        if (dismissEl.data.dismissed === 'closed') {
+            this.itemQty = dismissEl.data.totalQty;
+          }
+      });
     });
   }
 }

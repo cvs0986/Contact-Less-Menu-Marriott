@@ -101,6 +101,10 @@ const routes: Routes = [
             path: 'laundry',
             loadChildren: './hotel-home/laundry-service/laundry-service.module#LaundryServicePageModule',
           },
+          {
+            path: 'place-your-request',
+            loadChildren: './hotel-home/place-your-service/place-your-service.module#PlaceYourServicePageModule',
+          },
         ],
       },
       {

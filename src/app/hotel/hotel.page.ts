@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { CartComponent } from './cart/cart.component';
 
 @Component({
@@ -9,7 +9,7 @@ import { CartComponent } from './cart/cart.component';
 })
 export class HotelPage implements OnInit {
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor(private modalCtrl: ModalController, private alertCtrl: AlertController) { }
 
   ngOnInit() {
   }
@@ -19,6 +19,28 @@ export class HotelPage implements OnInit {
       component: CartComponent
     }).then(modalEl => {
       modalEl.present();
+    });
+  }
+
+  callAYS() {
+    this.alertCtrl.create({
+      header: 'Call AYS',
+      subHeader: 'At your service',
+      message: '011 4521 2121',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'CALL',
+          handler: () => {
+            window.open('tel:01145212121', '_self');
+          }
+        }
+      ]
+    }).then(alertEl => {
+      alertEl.present();
     });
   }
 
