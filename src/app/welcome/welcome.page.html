@@ -1,6 +1,7 @@
 <ion-content *ngIf="propertyType === 1">
-  <div class="rest-wrap-color" [style.background-color]="hotelDetails.hotel_header_color" [style.color]="hotelDetails.hotel_bc_color">
-    <div class="bottom-buttons">
+  <!-- [style.background-color]="hotelDetails.hotel_header_color" [style.color]="hotelDetails.hotel_bc_color" -->
+  <div class="rest-wrap-color">
+    <!-- <div class="bottom-buttons">
       <div class="place-order-btn ion-padding-horizontal">
         <ion-row>
           <ion-col size="5">
@@ -12,19 +13,19 @@
           </ion-col>
         </ion-row>
       </div>
-    </div>
+    </div> -->
     
     <div class="choose-action">
       <div class="center-item">
         <div class="hotel-logo">
-          <img src="{{hotelDetails.logo}}" width="50px" alt="" srcset="">
-          <h2>{{hotelName}}</h2>
+          <img src="{{hotelDetails.logo}}" width="200px" alt="" srcset="">
+          <!-- <h2>{{hotelName}}</h2> -->
         </div>
-        <div class="welcome-msg">
+        <!-- <div class="welcome-msg">
           <p>
             {{hotelDetails.welcome_msg}}
           </p>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

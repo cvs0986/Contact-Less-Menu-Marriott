@@ -1,0 +1,31 @@
+<ion-toolbar>
+  <ion-title>
+    <h5>Please select any!</h5>
+  </ion-title>
+  <ion-buttons slot="end">
+    <ion-button (click)="dismissAddon()">
+      <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</ion-toolbar>
+
+<ion-content class="ion-padding-horizontal">
+  <ion-fab slot="fixed" vertical="bottom">
+    <ion-button color="success" mode="md" expand="full" style="text-transform: capitalize;" (click)="addAddOns()">
+      <ion-icon size="small" slot="end" name="caret-forward-outline"></ion-icon>
+      ADD
+    </ion-button>
+  </ion-fab>
+
+  <ion-list>
+    <ion-radio-group (ionChange)="selectedAddon($event)">
+      <ion-item *ngFor="let item of itemAddon.addons" lines="none">
+        <ion-label style="font-size: 14px;">{{item.name}}</ion-label>
+        <ion-radio mode="md" slot="start" value="{{item.item_id}}"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
+
+
+  <br> <br> <br> <br>
+</ion-content>

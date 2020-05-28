@@ -29,6 +29,7 @@ export class WelcomePage implements OnInit {
       }
       const hotelId = paramMap.get('hi');
       localStorage.setItem('hi', paramMap.get('hi'));
+      localStorage.setItem('table', paramMap.get('table'));
       this.orderItemService.hotelId = hotelId;
       console.log(hotelId, this.orderItemService.hotelId);
 
@@ -49,9 +50,20 @@ export class WelcomePage implements OnInit {
   }
 
   ionViewDidEnter() {
+    console.log(this.propertyType);
     setTimeout(() => {
-      this.redirectToHome();
+      if (this.propertyType === 0) {
+        this.redirectToHome();
+        return false;
+      }
     }, 1000);
+
+    setTimeout(() => {
+      if (this.propertyType === 1) {
+        this.router.navigateByUrl('/home');
+        return false;
+      }
+    }, 1500);
   }
 
   takeAway() {

@@ -1,9 +1,12 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { IonInfiniteScroll, PopoverController, IonContent } from '@ionic/angular';
+import { IonInfiniteScroll, PopoverController, IonContent, ModalController } from '@ionic/angular';
 import { MenuListComponent } from '../menu-list/menu-list.component';
 import { Router } from '@angular/router';
 import { OrdersItemService } from '../orders-item.service';
 import { ApiService } from '../api.service';
+import { RestaurentGuidelinesComponent } from './restaurent-guidelines/restaurent-guidelines.component';
+import { RestaurentReviewOrderComponent } from './restaurent-review-order/restaurent-review-order.component';
+import { RestaurentAddonComponent } from './restaurent-addon/restaurent-addon.component';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +14,8 @@ import { ApiService } from '../api.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  // @ViewChild('IonInfiniteScroll', { static: true })
+
+// @ViewChild('IonInfiniteScroll', { static: true })
   // infiniteScroll: IonInfiniteScroll;
   @ViewChild(IonContent, {static: true}) content: IonContent;
   hotelID;
@@ -33,7 +37,8 @@ export class HomePage implements OnInit {
     private popOverCtrl: PopoverController,
     private router: Router,
     private orderItemsService: OrdersItemService,
-    private api: ApiService
+    private api: ApiService,
+    private modalCtrl: ModalController
   ) {}
 
   ngOnInit(): void {
@@ -51,7 +56,6 @@ export class HomePage implements OnInit {
 
     this.api.getCategory(this.hotelID).subscribe(
       (resp) => {
-        console.log(resp);
         this.menuCategories = resp.body.data;
       },
       (error) => {
@@ -64,6 +68,17 @@ export class HomePage implements OnInit {
         console.log(resp);
         if (resp.body.success == 1) {
           this.menuItems = resp.body.data;
+          this.menuItems.filter((category) => {
+            category.sub_category.filter((sub) => {
+              let addOns: any;
+              addOns = sub.items.map((item) => {
+                let o = Object.assign({}, item);
+                o.selectedAddons = [];
+                return o;
+              });
+              sub.items = addOns;
+            });
+          });
           this.showSkelton = false;
           this.showToggle = true;
         }
@@ -87,8 +102,17 @@ export class HomePage implements OnInit {
   //   );
   // }
 
-  parseJson(json) {
-    return JSON.parse(json);
+  viewRestaurentGuidelines() {
+    this.modalCtrl.create({
+      component: RestaurentGuidelinesComponent,
+      cssClass: 'restaurent-tnc'
+    }).then(modalEl => {
+      modalEl.present();
+    });
+  }
+
+  parsedJson(tag) {
+    return JSON.parse(tag);
   }
 
   getVegItems(e) {
@@ -99,6 +123,7 @@ export class HomePage implements OnInit {
           console.log(resp);
           this.menuItems = resp.body.data;
           this.showSkelton = false;
+          this.itemQty = 0;
         },
         (error) => {
           console.log(error);
@@ -113,6 +138,7 @@ export class HomePage implements OnInit {
         (resp) => {
           this.menuItems = resp.body.data;
           this.showSkelton = false;
+          this.itemQty = 0;
         },
         (error) => {
           console.log(error);
@@ -153,15 +179,65 @@ export class HomePage implements OnInit {
   }
 
   addItemInitial(menuItem) {
+    if (menuItem.addons.length !== 0) {
+      menuItem.count += 1;
+      this.modalCtrl.create({
+        component: RestaurentAddonComponent,
+        cssClass: 'restautent-addons',
+        backdropDismiss: false,
+        componentProps: {
+          itemAddon: menuItem,
+          itemQty: this.itemQty
+        }
+      }).then(modalEl => {
+        modalEl.present();
+        modalEl.onDidDismiss().then(dismissEl => {
+          if (dismissEl.data === undefined) {
+            menuItem.count = 0;
+            return false;
+          }
+          if (dismissEl.data.dismissed === 'close-btn') {
+            this.itemQty += 1;
+          }
+          console.log(menuItem);
+        });
+      });
+      return false;
+    }
     menuItem.count += 1;
     this.itemQty += 1;
     console.log(menuItem.count + 1, menuItem, this.itemQty, this.menuItems);
   }
 
-  incrementQty(item) {
-    item.count += 1;
+  incrementQty(menuItem) {
+    if (menuItem.addons.length !== 0) {
+      menuItem.count += 1;
+      this.modalCtrl.create({
+        component: RestaurentAddonComponent,
+        cssClass: 'restautent-addons',
+        backdropDismiss: false,
+        componentProps: {
+          itemAddon: menuItem,
+          itemQty: this.itemQty
+        }
+      }).then(modalEl => {
+        modalEl.present();
+        modalEl.onDidDismiss().then(dismissEl => {
+          if (dismissEl.data === undefined) {
+            menuItem.count = 0;
+            return false;
+          }
+          if (dismissEl.data.dismissed === 'close-btn') {
+            this.itemQty += 1;
+          }
+          console.log(menuItem);
+        });
+      });
+      return false;
+    }
+    menuItem.count += 1;
     this.itemQty += 1;
-    console.log(item.count + 1, item, this.itemQty);
+    console.log(menuItem.count + 1, menuItem, this.itemQty);
   }
 
   // decrements item
@@ -180,31 +256,30 @@ export class HomePage implements OnInit {
 
   reviewOrder() {
     this.orderItemsService.ordersItems = [];
-    this.menuItems.filter((item) => {
-      item.items.filter((menu) => {
-        if (menu.count !== 0) {
-          this.orderItemsService.ordersItems.push(menu);
-        }
+    const orderedItems = [];
+    this.menuItems.filter((category) => {
+      category.sub_category.filter((sub) => {
+        sub.items.filter(item => {
+          if (item.count !== 0) {
+            orderedItems.push(item);
+          }
+        });
       });
     });
     console.log(this.orderItemsService.ordersItems);
-    this.router.navigateByUrl('/review-order');
+    this.modalCtrl.create({
+      component: RestaurentReviewOrderComponent,
+      componentProps: {
+        orderedItems,
+        itemQty: this.itemQty
+      }
+    }).then(modalEl => {
+      modalEl.present();
+      modalEl.onDidDismiss().then(dismissEl => {
+        if (dismissEl.data.dismissed === 'closed') {
+            this.itemQty = dismissEl.data.totalQty;
+          }
+      });
+    });
   }
-
-  // loadData(event) {
-  //   setTimeout(() => {
-  //     console.log('Done');
-  //     event.target.complete();
-
-  //     // App logic to determine if all data is loaded
-  //     // and disable the infinite scroll
-  //     if (this.menuItems.length == 1) {
-  //       event.target.disabled = true;
-  //     }
-  //   }, 500);
-  // }
-
-  // toggleInfiniteScroll() {
-  //   this.infiniteScroll.disabled = !this.infiniteScroll.disabled;
-  // }
 }

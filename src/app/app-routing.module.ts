@@ -12,7 +12,7 @@ const routes: Routes = [
     loadChildren: './home/home.module#HomePageModule',
   },
   {
-    path: 'welcome/:hi',
+    path: 'welcome/:hi/:table',
     loadChildren: './welcome/welcome.module#WelcomePageModule',
   },
   {
@@ -24,8 +24,16 @@ const routes: Routes = [
     loadChildren: './confirmation/confirmation.module#ConfirmationPageModule',
   },
   {
+    path: 'restaurent-confirmation',
+    loadChildren: './restaurent-confirmation/restaurent-confirmation.module#RestaurentConfirmationPageModule',
+  },
+  {
     path: 'hotel',
     loadChildren: './hotel/hotel.module#HotelPageModule',
+  },
+  {
+    path: 'restaurent-confirmation',
+    loadChildren: () => import('./restaurent-confirmation/restaurent-confirmation.module').then( m => m.RestaurentConfirmationPageModule)
   },
 ];
 

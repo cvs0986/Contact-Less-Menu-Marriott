@@ -228,7 +228,7 @@ export class ReviewOrderPage implements OnInit {
           console.log('in.....');
           this.orderItemsService.placedOrder = finalData;
           this.progressLoading = false;
-          this.router.navigateByUrl('/confirmation');
+          this.router.navigateByUrl('/restaurent-confirmation');
         }
 
         if (this.placeResponse.success == 0 && this.placeResponse.message === 'room_no is not Found!') {

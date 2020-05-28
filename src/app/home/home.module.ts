@@ -6,6 +6,9 @@ import { HomePage } from './home.page';
 
 import { HomePageRoutingModule } from './home-routing.module';
 import { MenuListComponent } from '../menu-list/menu-list.component';
+import { RestaurentGuidelinesComponent } from './restaurent-guidelines/restaurent-guidelines.component';
+import { RestaurentReviewOrderComponent } from './restaurent-review-order/restaurent-review-order.component';
+import { RestaurentAddonComponent } from './restaurent-addon/restaurent-addon.component';
 
 
 @NgModule({
@@ -15,7 +18,7 @@ import { MenuListComponent } from '../menu-list/menu-list.component';
     IonicModule,
     HomePageRoutingModule
   ],
-  declarations: [HomePage, MenuListComponent],
-  entryComponents: [MenuListComponent]
+  declarations: [HomePage, MenuListComponent, RestaurentGuidelinesComponent, RestaurentReviewOrderComponent, RestaurentAddonComponent],
+  entryComponents: [MenuListComponent, RestaurentGuidelinesComponent, RestaurentReviewOrderComponent, RestaurentAddonComponent]
 })
 export class HomePageModule {}
