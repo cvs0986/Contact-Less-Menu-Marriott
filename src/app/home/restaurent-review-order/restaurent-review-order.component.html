@@ -69,9 +69,9 @@
             <h3 style="white-space: pre-wrap !important;">{{item.name}}</h3>
             <h3 class="price">&#x20b9;{{item.price}}</h3>
             <h6 *ngIf="item.selectedAddons.length !== 0">
-              Add-on<br>
+              Add-ons - 
               <div class="addons" *ngFor="let addon of item.selectedAddons">
-                <span>{{addon.name}}</span>
+                <small>{{addon.name}}, </small>
               </div>
             </h6>
           </div>

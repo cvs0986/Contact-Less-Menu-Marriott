@@ -9,6 +9,7 @@ import { ModalController } from '@ionic/angular';
 export class RestaurentAddonComponent implements OnInit {
   @Input() itemAddon;
   @Input() itemQty;
+  checkedRadio;
 
   constructor(
     private modalCtrl: ModalController
@@ -18,38 +19,42 @@ export class RestaurentAddonComponent implements OnInit {
     console.log(this.itemAddon);
   }
 
-  selectedAddon(e) {
-    console.log(e);
-    this.itemAddon.selectedAddons = [];
-    this.itemAddon.addons.filter(item => {
-      if (item.item_id == e.detail.value) {
+  selectedRadioAddon(e, sub) {
+    console.log(e, sub);
+    this.itemAddon.selectedAddons.filter((item) => {
+      if (item.menu_item_subaddon_id == sub.id) {
+        this.itemAddon.selectedAddons.splice(this.itemAddon.selectedAddons.indexOf(item), 1);
+      }
+    });
+    sub.addons.filter(item => {
+      if (item.id == e.detail.value) {
         const addonData = {
-          addon_id: item.item_id,
-          count: 1,
-          name: item.name
+          menu_item_addon_id: item.id,
+          quantity: 1,
+          name: item.name,
+          menu_item_subaddon_id: item.menu_item_subaddon_id,
         };
         this.itemAddon.selectedAddons.push(addonData);
       }
     });
-    console.log(this.itemAddon);
   }
 
-  selectedAddonFocus(e) {
-    console.log(e);
+  selectedCheckBoxAddon(item, ind) {
+    console.log(item, ind);
     const addonData = {
-      addon_id: e.item_id,
-      count: e.count
+      menu_item_addon_id: item.id,
+      quantity: 1,
+      name: item.name,
+      menu_item_subaddon_id: item.menu_item_subaddon_id,
     };
-    this.itemAddon.selectedAddons.push(addonData);
-  }
 
-  selectedAddonBlur(e) {
-    console.log(e);
-    const addonData = {
-      addon_id: e.item_id,
-      count: e.count
-    };
-    this.itemAddon.selectedAddons.splice(this.itemAddon.selectedAddons.indexOf(addonData), 1);
+    if (item.isChecked === true) {
+      this.itemAddon.selectedAddons.push(addonData);
+      console.log(this.itemAddon);
+    } else if (item.isChecked === false) {
+      this.itemAddon.selectedAddons.splice(this.itemAddon.selectedAddons.indexOf(addonData), 1);
+      console.log(this.itemAddon);
+    }
   }
 
   addAddOns() {

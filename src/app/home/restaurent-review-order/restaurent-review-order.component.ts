@@ -38,6 +38,7 @@ export class RestaurentReviewOrderComponent implements OnInit {
   ngOnInit() {
     console.log(this.orderedItems);
     this.tableNo = localStorage.getItem('table');
+    this.hotelId = localStorage.getItem('hi');
     this.calculateTotalPrice();
   }
 
@@ -116,18 +117,18 @@ export class RestaurentReviewOrderComponent implements OnInit {
   placeOrder() {
     const orderedItems = [];
     this.orderedItems.filter(item => {
-      if (item.count !== 0 && item.addons.length !== 0) {
+      if (item.count !== 0 && item.sub_addons.length !== 0) {
         const itemData = {
-          item_id: item.item_id,
-          count: item.count,
+          menu_item_id: item.id,
+          quantity: item.count,
           addons: item.selectedAddons,
         };
         orderedItems.push(itemData);
       }
-      if (item.count !== 0 && item.addons.length === 0) {
+      if (item.count !== 0 && item.sub_addons.length === 0) {
         const itemData = {
-          item_id: item.item_id,
-          count: item.count
+          menu_item_id: item.id,
+          quantity: item.count,
         };
         orderedItems.push(itemData);
       }
@@ -146,36 +147,23 @@ export class RestaurentReviewOrderComponent implements OnInit {
       return false;
     }
 
-    if (orderedItems.length === 0) {
-      this.toastCtrl.create({
-        message: 'Did not find any items, please close this window and add items from menu!',
-        keyboardClose: true,
-        duration: 5000,
-        color: 'danger',
-        position: 'top'
-      }).then(toastEl => {
-        toastEl.present();
-      });
-      return false;
-    }
-
     const data = {
-      no_guest: this.guestQty,
-      details: this.cookingIns,
+      enc_hotel_id: this.hotelId,
+      no_of_guest: this.guestQty,
+      description: this.cookingIns,
       items: JSON.stringify(orderedItems),
-      room_no: localStorage.getItem('table')
+      table_no: localStorage.getItem('table')
     };
     console.log(data);
     this.progressLoading = true;
 
     $.post(
-      'https://ird-api.valet2you.in/v10.0.6/guest/order/' +
-        localStorage.getItem('hi'),
-      data,
+      'https://vserve-api.valet2you.in/api/v1/restaurant/guest/order', data,
       (resp) => {
-        this.placeResponse = JSON.parse(resp);
-        if (this.placeResponse.success === '1') {
-          console.log(this.placeResponse, 'response');
+        // this.placeResponse = JSON.parse(resp);
+        console.log(resp);
+        if (resp.message === 'Success') {
+          // console.log(this.placeResponse, 'response');
           this.progressLoading = false;
           this.modalCtrl.dismiss();
           this.router.navigateByUrl('/restaurent-confirmation');

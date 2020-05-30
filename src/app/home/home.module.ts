@@ -9,6 +9,7 @@ import { MenuListComponent } from '../menu-list/menu-list.component';
 import { RestaurentGuidelinesComponent } from './restaurent-guidelines/restaurent-guidelines.component';
 import { RestaurentReviewOrderComponent } from './restaurent-review-order/restaurent-review-order.component';
 import { RestaurentAddonComponent } from './restaurent-addon/restaurent-addon.component';
+import { RestaurentMenuFilterComponent } from '../restaurent-menu-filter/restaurent-menu-filter.component';
 
 
 @NgModule({
@@ -18,7 +19,7 @@ import { RestaurentAddonComponent } from './restaurent-addon/restaurent-addon.co
     IonicModule,
     HomePageRoutingModule
   ],
-  declarations: [HomePage, MenuListComponent, RestaurentGuidelinesComponent, RestaurentReviewOrderComponent, RestaurentAddonComponent],
-  entryComponents: [MenuListComponent, RestaurentGuidelinesComponent, RestaurentReviewOrderComponent, RestaurentAddonComponent]
+  declarations: [HomePage, MenuListComponent, RestaurentGuidelinesComponent, RestaurentReviewOrderComponent, RestaurentAddonComponent, RestaurentMenuFilterComponent],
+  entryComponents: [MenuListComponent, RestaurentGuidelinesComponent, RestaurentReviewOrderComponent, RestaurentAddonComponent, RestaurentMenuFilterComponent]
 })
 export class HomePageModule {}

@@ -7,6 +7,7 @@ import { ApiService } from '../api.service';
 import { RestaurentGuidelinesComponent } from './restaurent-guidelines/restaurent-guidelines.component';
 import { RestaurentReviewOrderComponent } from './restaurent-review-order/restaurent-review-order.component';
 import { RestaurentAddonComponent } from './restaurent-addon/restaurent-addon.component';
+import { RestaurentMenuFilterComponent } from '../restaurent-menu-filter/restaurent-menu-filter.component';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +23,7 @@ export class HomePage implements OnInit {
   itemQty = 0;
 
   hotelDetails;
-  hotelName;
+  hotelAssets;
   currency;
 
   showMenus = false;
@@ -30,7 +31,7 @@ export class HomePage implements OnInit {
   showSkelton = true;
   showToggle = false;
 
-  menuItems: any[];
+  menuItems: any;
   menuCategories: any[];
 
   constructor(
@@ -49,39 +50,39 @@ export class HomePage implements OnInit {
 
     const hotelInfo = localStorage.getItem('hotelInfo');
     const parsedHotel = JSON.parse(hotelInfo);
-    this.hotelDetails = parsedHotel.details;
-    this.hotelName = parsedHotel.hotel_name;
-    this.currency = parsedHotel.currency;
-    console.log(parsedHotel, this.hotelDetails);
+    this.hotelDetails = parsedHotel;
+    this.hotelAssets = JSON.parse(parsedHotel.assets);
+    console.log(this.hotelDetails, this.hotelAssets);
 
-    this.api.getCategory(this.hotelID).subscribe(
-      (resp) => {
-        this.menuCategories = resp.body.data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-
-    this.api.getMenus(this.hotelID).subscribe(
+    this.api.getRestaurentMenus(this.hotelID).subscribe(
       (resp) => {
         console.log(resp);
-        if (resp.body.success == 1) {
-          this.menuItems = resp.body.data;
-          this.menuItems.filter((category) => {
-            category.sub_category.filter((sub) => {
-              let addOns: any;
-              addOns = sub.items.map((item) => {
-                let o = Object.assign({}, item);
-                o.selectedAddons = [];
-                return o;
-              });
-              sub.items = addOns;
+        this.menuItems = resp.body.data;
+        this.menuItems.categories.filter((category) => {
+          category.sub_categories.filter((sub) => {
+            let addOns: any;
+            addOns = sub.items.map((item) => {
+              let o = Object.assign({}, item);
+              o.selectedAddons = [];
+              o.count = 0;
+              return o;
             });
+            sub.items = addOns;
           });
-          this.showSkelton = false;
-          this.showToggle = true;
-        }
+          if (category.without_sub_category_items.length !== 0) {
+            let addOns: any;
+            addOns = category.without_sub_category_items.map((item) => {
+              let o = Object.assign({}, item);
+              o.selectedAddons = [];
+              o.count = 0;
+              return o;
+            });
+            category.without_sub_category_items = addOns;
+            console.log(category.without_sub_category_items);
+          }
+        });
+        this.showSkelton = false;
+        this.showToggle = true;
       },
       (error) => {
         console.log(error);
@@ -105,7 +106,9 @@ export class HomePage implements OnInit {
   viewRestaurentGuidelines() {
     this.modalCtrl.create({
       component: RestaurentGuidelinesComponent,
-      cssClass: 'restaurent-tnc'
+      cssClass: 'restaurent-tnc',
+      backdropDismiss: true,
+      showBackdrop: true,
     }).then(modalEl => {
       modalEl.present();
     });
@@ -151,22 +154,24 @@ export class HomePage implements OnInit {
   showMenusCategory(ev) {
     this.popOverCtrl
       .create({
-        component: MenuListComponent,
+        component: RestaurentMenuFilterComponent,
         componentProps: {
-          menuCategories: this.menuCategories,
+          menuCategories: this.menuItems.categories,
         },
         event: ev,
         translucent: true,
-        mode: 'ios',
+        showBackdrop: true,
+        cssClass: 'ird-menu-filter',
       })
       .then((popoverEl) => {
         popoverEl.present();
         popoverEl.onDidDismiss().then((dismissEl) => {
           const data = dismissEl.data;
+          console.log(data);
           if (dismissEl.data.role === 'closed') {
-            const titleELe = document.getElementById(data.data.menu_category_id);
+            const titleELe = document.getElementById(data.data);
             this.content.scrollToPoint(0, titleELe.offsetTop, 1000);
-            console.log(data.data.menu_category_id, titleELe);
+            console.log(data, titleELe);
           }
           console.log(dismissEl.data);
         });
@@ -179,7 +184,7 @@ export class HomePage implements OnInit {
   }
 
   addItemInitial(menuItem) {
-    if (menuItem.addons.length !== 0) {
+    if (menuItem.sub_addons.length !== 0) {
       menuItem.count += 1;
       this.modalCtrl.create({
         component: RestaurentAddonComponent,
@@ -210,7 +215,7 @@ export class HomePage implements OnInit {
   }
 
   incrementQty(menuItem) {
-    if (menuItem.addons.length !== 0) {
+    if (menuItem.sub_addons.length !== 0) {
       menuItem.count += 1;
       this.modalCtrl.create({
         component: RestaurentAddonComponent,
@@ -257,14 +262,21 @@ export class HomePage implements OnInit {
   reviewOrder() {
     this.orderItemsService.ordersItems = [];
     const orderedItems = [];
-    this.menuItems.filter((category) => {
-      category.sub_category.filter((sub) => {
-        sub.items.filter(item => {
+    this.menuItems.categories.filter((category) => {
+      category.sub_categories.filter((sub) => {
+        sub.items.filter((item) => {
           if (item.count !== 0) {
             orderedItems.push(item);
           }
         });
       });
+      if (category.without_sub_category_items.length > 0) {
+        category.without_sub_category_items.filter(item => {
+           if (item.count !== 0) {
+             orderedItems.push(item);
+           }
+        });
+      }
     });
     console.log(this.orderItemsService.ordersItems);
     this.modalCtrl.create({

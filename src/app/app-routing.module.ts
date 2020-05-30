@@ -12,7 +12,15 @@ const routes: Routes = [
     loadChildren: './home/home.module#HomePageModule',
   },
   {
-    path: 'welcome/:hi/:table',
+    path: 'welcome/:hi',
+    loadChildren: './welcome/welcome.module#WelcomePageModule',
+  },
+  {
+    path: 'welcome/:hi/:type',
+    loadChildren: './welcome/welcome.module#WelcomePageModule',
+  },
+  {
+    path: 'welcome/:hi/:type/:table',
     loadChildren: './welcome/welcome.module#WelcomePageModule',
   },
   {

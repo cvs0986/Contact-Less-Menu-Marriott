@@ -1,13 +1,13 @@
 <ion-toolbar mode="md">
   <ion-buttons slot="end">
     <ion-button (click)="viewRestaurentGuidelines()">
-      <ion-icon slot="icon-only" name="alert-outline"></ion-icon>
+      <ion-icon slot="icon-only" name="information-circle-outline"></ion-icon>
     </ion-button>
   </ion-buttons>
 
   <ion-title>
     <!-- <h3>{{hotelName}}</h3> -->
-    <img src="{{hotelDetails.logo}}" alt="" width="100px">
+    <img src="https://master-vserve.s3.ap-south-1.amazonaws.com/restaurant-properties/{{hotelDetails.logo}}" alt="" width="100px">
   </ion-title>
 </ion-toolbar>
 
@@ -133,25 +133,77 @@
   <br>
 
   <div class="without-skelton" *ngIf="showSkelton === false">
-    <div class="menu-list" *ngFor="let category of menuItems let index = index;" id="{{category.category_id}}">
-      <div class="show-hide-category" *ngIf="category.is_enabled == 1">
+    <div class="menu-list" *ngFor="let category of menuItems.categories; let index = index;">
+      <div class="show-hide-category" *ngIf="category.enabled == 1">
+        <!-- [style.background-color]="hotelDetails.bc_color" [style.color]="hotelDetails.hotel_header_color" -->
         <p>
-          <span class="category-name" [style.background-color]="hotelDetails.bc_color" [style.color]="hotelDetails.hotel_header_color">{{category.name}}</span>
+          <span class="category-name" [style.background-color]="hotelAssets.styles.bg_color_category" [style.color]="hotelAssets.styles.header_color">{{category.name}}</span>
         </p>
         <ion-row style="padding: 0px 9px; margin-bottom: 10px;" *ngIf="category.image !== null">
           <ion-col size="12">
             <ion-thumbnail>
-              <img src="{{category.image}}" alt="">
+              <img src="https://master-vserve.s3.ap-south-1.amazonaws.com/menu-categories/{{category.image}}" alt="">
             </ion-thumbnail>
           </ion-col>
         </ion-row>
         <span class="ion-padding-horizontal" style="font-size: 13px; display: block; margin-top: 0px;">{{category.description}}</span>
         
-        <div class="toggleMenus" *ngFor="let subCat of category.sub_category">
-          <h6 style="font-size: 14px; margin: 30px 0px 15px 0px;font-weight: 600;letter-spacing: 2px;" class="ion-padding-horizontal">{{subCat.name}}</h6>
+        <div class="toggleMenus" *ngFor="let subCat of category.sub_categories" id="{{subCat.id}}">
+          <br>
+          <h6 style="font-size: 14px; margin: 0px 0px 15px 0px;font-weight: 600;letter-spacing: 2px;" class="ion-padding-horizontal">{{subCat.name}}</h6>
           <!-- <div class="sub-category-divider ion-padding-horizontal"></div> -->
           <ion-list lines="none" *ngFor="let menuItem of subCat.items" mode="md">
-            <ion-item style="margin-top: -15px;" mode="md" *ngIf="menuItem.is_enabled == 1">
+            <ion-item style="margin-top: -15px;" mode="md" *ngIf="menuItem.enabled == 1">
+              <!-- <div class="thumbnail-wrap" *ngIf="menuItem.image !== null">
+                <img class="food-type-icon" *ngIf="menuItem.type === 'veg'" src="../../assets/icon/veg.png" alt="" srcset="">
+                <img class="food-type-icon" *ngIf="menuItem.type === 'non-veg'" src="../../assets/icon/non-veg.png" alt=""
+                  srcset="">
+                <ion-thumbnail slot="start">
+                  <img src="{{menuItem.image}}">
+                </ion-thumbnail>
+              </div> -->
+              <ion-label class="ion-text-wrap">
+                <div class="details">
+                  <h2 style="font-size: 13px; display: flex; align-items: center; white-space: pre-wrap;">
+                    <span style="margin-right: 2px;">
+                      <img *ngIf="menuItem.type === 'veg'" src="../../assets/icon/veg.png" width="16px" alt="" srcset="">
+                      <img *ngIf="menuItem.type === 'non_veg'" src="../../assets/icon/non-veg.png" width="16px" alt=""
+                        srcset="">
+                    </span>
+                    {{menuItem.name}}
+                  </h2>
+                  <h6 class="category-small">{{subCat.name}}</h6>
+                  <div class="tags-images" style="margin-top: 2px;" *ngIf="menuItem.tags !== null">
+                    <span *ngFor="let tag of parsedJson(menuItem.tags)">
+                      <ion-badge
+                        style="text-transform: uppercase; font-size: 9px; font-weight: 900; letter-spacing: 1.3px; margin-right: 5px;"
+                        color="danger" mode="android">{{tag}}</ion-badge>
+                    </span>
+                  </div>
+                  <h3 class="price">&#x20b9; {{menuItem.price}}</h3>
+                  <p>{{menuItem.description}}</p>
+                </div>
+        
+                <div class="add-action">
+                  <ion-button (click)="addItemInitial(menuItem)" *ngIf="menuItem.count === 0" fill="outline" size="small"
+                    color="medium" style="text-transform: capitalize; font-weight: 400;">
+                    Add <ion-icon style="margin-right: 5px;" slot="end" size="small" name="add-outline"></ion-icon>
+                  </ion-button>
+        
+                  <div class="add-item-button" *ngIf="menuItem.count !== 0">
+                    <ion-icon (click)="decrementQty(menuItem)" class="add-item-button-left" name="remove-outline"></ion-icon>
+                    {{menuItem.count}} <ion-icon (click)="incrementQty(menuItem)" class="add-item-button-right"
+                      name="add-outline"></ion-icon>
+                  </div>
+        
+                </div>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
+
+        <ion-list lines="none" *ngFor="let menuItem of category.without_sub_category_items" mode="md">
+            <ion-item style="margin-top: -15px;" mode="md" *ngIf="menuItem.enabled == 1">
               <!-- <div class="thumbnail-wrap" *ngIf="menuItem.image !== null">
                 <img class="food-type-icon" *ngIf="menuItem.type === 'veg'" src="../../assets/icon/veg.png" alt="" srcset="">
                 <img class="food-type-icon" *ngIf="menuItem.type === 'non-veg'" src="../../assets/icon/non-veg.png" alt=""
@@ -170,7 +222,7 @@
                     </span>
                     {{menuItem.name}}
                   </h2>
-                  <h6 class="category-small">{{subCat.name}}</h6>
+                  <h6 class="category-small">{{category.name}}</h6>
                   <!-- <div class="tags-images" style="margin-top: 2px;" *ngIf="menuItem.tags !== null">
                     <span *ngFor="let tag of menuItem.tags">
                       <ion-badge
@@ -198,7 +250,6 @@
               </ion-label>
             </ion-item>
           </ion-list>
-        </div>
       </div>
     </div>
   </div>

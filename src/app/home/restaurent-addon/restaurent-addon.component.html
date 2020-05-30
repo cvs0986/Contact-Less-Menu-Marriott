@@ -1,6 +1,6 @@
 <ion-toolbar>
   <ion-title>
-    <h5>Please select any!</h5>
+    <h5>{{itemAddon.name}}</h5>
   </ion-title>
   <ion-buttons slot="end">
     <ion-button (click)="dismissAddon()">
@@ -17,14 +17,32 @@
     </ion-button>
   </ion-fab>
 
-  <ion-list>
-    <ion-radio-group (ionChange)="selectedAddon($event)">
-      <ion-item *ngFor="let item of itemAddon.addons" lines="none">
+  <div class="sub-addons" *ngFor="let subAddon of itemAddon.sub_addons">
+    <ion-list *ngIf="subAddon.type === 'single_select'">
+      <ion-list-header>
+        <h6>{{subAddon.name}}</h6>
+      </ion-list-header>
+    
+      <ion-radio-group name="{{subAddon.name}}"
+        (ionChange)="selectedRadioAddon($event, subAddon)">
+        <ion-item lines="none" *ngFor="let item of subAddon.addons; let index">
+          <ion-label style="font-size: 14px;">{{item.name}}</ion-label>
+          <ion-radio mode="md" name="{{item.name}}" slot="start" value="{{item.id}}"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+
+    <ion-list *ngIf="subAddon.type === 'multi_select'">
+      <ion-list-header>
+        <h6>{{subAddon.name}}</h6>
+      </ion-list-header>
+
+      <ion-item lines="none" *ngFor="let item of subAddon.addons; let i = index" (ionChange)="selectedCheckBoxAddon(item, i)">
         <ion-label style="font-size: 14px;">{{item.name}}</ion-label>
-        <ion-radio mode="md" slot="start" value="{{item.item_id}}"></ion-radio>
+        <ion-checkbox slot="start" [checked]="i == 0" [(ngModel)]="item.isChecked"></ion-checkbox>
       </ion-item>
-    </ion-radio-group>
-  </ion-list>
+    </ion-list>
+  </div>
 
 
   <br> <br> <br> <br>

@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class ApiService {
   url = 'https://ird-api.valet2you.in/v10.0.6/guest/';
+  restaurentUrl = 'https://vserve-api.valet2you.in/api/v1/restaurant/guest/';
 
   constructor(private http: HttpClient) {}
 
@@ -13,6 +14,32 @@ export class ApiService {
     return this.http.get<any>(this.url + 'menu/' + id, {
       observe: 'response',
       responseType: 'json',
+    });
+  }
+
+  getRestaurentMenus(id) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    });
+
+    return this.http.get<any>(this.restaurentUrl + 'menu/' + id, {
+      observe: 'response',
+      responseType: 'json',
+      headers
+    });
+  }
+
+  getRestaurentProperties(id) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    });
+
+    return this.http.get<any>(this.restaurentUrl + 'restaurant_properties/' + id, {
+      observe: 'response',
+      responseType: 'json',
+      headers
     });
   }
 

@@ -14,6 +14,7 @@ export class WelcomePage implements OnInit {
   hotelDetails;
   hotelName;
   welcomeMsg;
+  logo;
 
   constructor(
     private router: Router,
@@ -30,17 +31,22 @@ export class WelcomePage implements OnInit {
       const hotelId = paramMap.get('hi');
       localStorage.setItem('hi', paramMap.get('hi'));
       localStorage.setItem('table', paramMap.get('table'));
+      localStorage.setItem('propertyType', paramMap.get('type'));
+      this.propertyType = +paramMap.get('type');
+      console.log(this.propertyType);
       this.orderItemService.hotelId = hotelId;
       console.log(hotelId, this.orderItemService.hotelId);
 
       // 'dXEwMm5qSVVGaWFkNzhCRHlQN2g5RjhvMWIvNnlDWHEvbFR1S29VRjJYaz0'
-      this.api.getHotelType(hotelId).subscribe(
+      this.api.getRestaurentProperties(hotelId).subscribe(
         (resp) => {
           console.log(resp);
           this.hotelDetails = resp.body.details;
-          this.propertyType = resp.body.is_restaurant;
-          this.hotelName = resp.body.hotel_name;
-          localStorage.setItem('hotelInfo', JSON.stringify(resp.body));
+          this.logo = resp.body.data.logo;
+          this.hotelDetails = resp.body.assets;
+          // this.propertyType = resp.body.is_restaurant;
+          // this.hotelName = resp.body.hotel_name;
+          localStorage.setItem('hotelInfo', JSON.stringify(resp.body.data));
         },
         (error) => {
           console.log(error);

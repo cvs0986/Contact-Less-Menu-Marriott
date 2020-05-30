@@ -7,10 +7,16 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./restaurent-guidelines.component.scss'],
 })
 export class RestaurentGuidelinesComponent implements OnInit {
-
+  assets: any;
   constructor(private modalCtrl: ModalController) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    const hotelInfo = localStorage.getItem('hotelInfo');
+    const parsedHotel = JSON.parse(hotelInfo);
+    this.assets = JSON.parse(parsedHotel.assets);
+
+    console.log(this.assets);
+  }
 
   dismissCart() {
     this.modalCtrl.dismiss();
